@@ -1,4 +1,4 @@
-# 🎮 Go Feel - Emotion Recognition Game
+# 🎮 Go Feel
 
 **Go Feel** is an accessible, interactive web-based game designed to help autistic and visually impaired children recognize emotions through scenario-based learning. The game promotes emotional intelligence, communication skills, and inclusive interaction using multisensory techniques.
 
@@ -15,6 +15,4 @@
   - **VI Mode**: Voice navigation, spatial audio radar, and keyboard-only control.
 - 🖼️ **Scenario Images**: Realistic and relatable visual prompts.
 - 🗣️ **Speech on Hover**: All selectable options have audio feedback.
-
-## 🧩 Game Structure
 
