@@ -1,4 +1,5 @@
-# 🎮 Go Feel
+# 🎮 Go Feel-An Accessible Playground Game for Autistic Children
+
 
 **Go Feel** is an accessible, interactive web-based game designed to help autistic and visually impaired children recognize emotions through scenario-based learning. The game promotes emotional intelligence, communication skills, and inclusive interaction using multisensory techniques.
 
