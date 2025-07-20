@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>School - Sublevel 1</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right,
+                    #ffd1dc,
+                    
+                    #ffeeb3,
+                    
+                    #d0f0c0,
+                    
+                    #cce5ff,
+                   
+                    #e0ccff,
+                    
+                    #fcd3ff
+                    
+                );
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+            font-size: 1.8rem;
+            color: #f57f17;
+        }
+
+        .scenario {
+            margin-top: 40px;
+            width: 300px;
+            height: 200px;
+            background: url('assets/s1.jpg') center/cover no-repeat;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .option {
+            background: #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .option:hover {
+            background: #ffeb3b;
+        }
+
+        .option.correct {
+            background: #81c784 !important;
+        }
+
+        .option.wrong {
+            background: #ef9a9a !important;
+        }
+
+        .back {
+            margin-top: 30px;
+            background: #f57f17;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>What emotions do you see in this school scene?</h1>
+
+    <div class="scenario" onmouseover="speakNarration()"></div>
+
+    <div class="options">
+        <div class="option" data-correct="true" onmouseover="speak('Focused')">Focused</div>
+        <div class="option" data-correct="true" onmouseover="speak('Proud')">Proud</div>
+        <div class="option" data-correct="false" onmouseover="speak('Worried')">Worried</div>
+        <div class="option" data-correct="true" onmouseover="speak('Confident')">Confident</div>
+        <div class="option" data-correct="false" onmouseover="speak('Grumpy')">Grumpy</div>
+        <div class="option" data-correct="false" onmouseover="speak('Sleepy')">Sleepy</div>
+    </div>
+
+    <button class="back" onclick="goBack()">Back</button>
+
+
+
+    <script>
+        speak('The children are eager to answer the teacher\'s question! What emotions do you see in this school scene?');
+        const options = document.querySelectorAll('.option');
+        let correctCount = 0;
+        let clicked = 0;
+
+        options.forEach(option => {
+            option.addEventListener('click', () => {
+                if (option.classList.contains('correct') || option.classList.contains('wrong')) return;
+
+                clicked++;
+                const isCorrect = option.dataset.correct === 'true';
+
+                if (isCorrect) {
+                    correctCount++;
+                    option.classList.add('correct');
+                } else {
+                    option.classList.add('wrong');
+                }
+
+                if (correctCount === 3) {
+                    localStorage.setItem('school-sub1', 'done');
+                    setTimeout(() => {
+                        window.location.href = 'school.html';
+                    }, 1000);
+                } else if (clicked === 6) {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                }
+            });
+        });
+
+        function goBack() {
+            window.location.href = 'school.html';
+        }
+
+        function speak(text) {
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.rate = 0.9;
+            window.speechSynthesis.speak(msg);
+        }
+
+
+    </script>
+</body>
+
+</html>

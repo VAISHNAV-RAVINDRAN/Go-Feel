@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Go Feel - Adventure Road</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #87ceeb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .cloud {
+      position: absolute;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      animation: float 10s infinite ease-in-out alternate;
+      z-index: 1;
+    }
+
+    .cloud.small {
+      width: 80px;
+      height: 50px;
+      animation-duration: 12s;
+    }
+
+    .cloud.medium {
+      width: 120px;
+      height: 70px;
+      animation-duration: 10s;
+    }
+
+    .cloud.large {
+      width: 150px;
+      height: 90px;
+      animation-duration: 15s;
+    }
+
+    .cloud.extra-small {
+      width: 60px;
+      height: 40px;
+      animation-duration: 9s;
+    }
+
+    .cloud::before,
+    .cloud::after {
+      content: '';
+      position: absolute;
+      background: #ffffff;
+      border-radius: 50%;
+    }
+
+    .cloud::before {
+      width: 60%;
+      height: 100%;
+      top: -30%;
+      left: 10%;
+    }
+
+    .cloud::after {
+      width: 70%;
+      height: 120%;
+      top: -40%;
+      right: 5%;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px) translateX(0px);
+      }
+
+      50% {
+        transform: translateY(-10px) translateX(10px);
+      }
+
+      100% {
+        transform: translateY(0px) translateX(0px);
+      }
+    }
+
+    .map-container {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      margin-top: 100px;
+      position: relative;
+      width: 90%;
+      max-width: 800px;
+      height: 300px;
+      z-index: 5;
+    }
+
+    .level-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 40px;
+    }
+
+    .level-label {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 6px 12px;
+      border-radius: 12px;
+      text-align: center;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .level-wrapper:hover .level-label {
+      background-color: rgba(0, 0, 0, 0.5);
+      transform: scale(1.05);
+    }
+
+    .level-icon-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s;
+      cursor: not-allowed;
+      z-index: 8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #9e9e9e;
+    }
+
+    .level-icon-container.unlocked {
+      cursor: pointer;
+      background-color: transparent;
+    }
+
+    .level-icon-container.unlocked:hover {
+      transform: translateY(-10px) scale(1.1);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .level-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 1rem;
+      display: block;
+      filter: grayscale(100%);
+      transition: filter 0.3s ease-in-out;
+    }
+
+    .level-icon-container.unlocked .level-image {
+      filter: grayscale(0%);
+    }
+
+    .path-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .path-line {
+      stroke: #64b5f6;
+      stroke-width: 8;
+      fill: none;
+      stroke-dasharray: 15 10;
+      stroke-dashoffset: 2000;
+      animation: drawPath 3s forwards ease-out;
+      animation-delay: 0.5s;
+    }
+
+    .path-arrow {
+      fill: #64b5f6;
+      opacity: 0;
+      animation: fadeIn 1s forwards ease-in;
+      animation-delay: 3.5s;
+    }
+
+    @keyframes drawPath {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .map-container {
+        flex-direction: column;
+        height: auto;
+        margin-top: 50px;
+      }
+
+      .level-icon-container {
+        width: 120px;
+        height: 120px;
+        margin: 20px 0;
+      }
+
+      .level-label {
+        font-size: 14px;
+      }
+
+      .path-svg {
+        height: 100%;
+        width: 100%;
+      }
+    }
+
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      background-color: rgba(255, 255, 255, 0.8);
+      color: #333;
+      padding: 10px 18px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .back-button:hover {
+      background-color: #ffffff;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Back Button -->
+  <a href="index.html" class="back-button">← Back to Home</a>
+
+  <!-- Clouds -->
+  <div class="cloud small" style="top: 10%; left: 5%;"></div>
+  <div class="cloud medium" style="top: 20%; right: 15%;"></div>
+  <div class="cloud large" style="top: 5%; left: 30%;"></div>
+  <div class="cloud extra-small" style="top: 30%; left: 20%;"></div>
+  <div class="cloud small" style="top: 15%; right: 5%;"></div>
+  <div class="cloud medium" style="top: 25%; left: 10%;"></div>
+  <div class="cloud large" style="top: 12%; right: 35%;"></div>
+  <div class="cloud extra-small" style="top: 35%; left: 40%;"></div>
+
+  <div class="map-container">
+    <svg class="path-svg" viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet">
+      <path id="path1-2" class="path-line" d="M210,150 C280,80 330,80 400,150" />
+      <polygon class="path-arrow" points="400,140 410,150 400,160" />
+      <path id="path2-3" class="path-line" d="M400,150 C470,80 520,80 590,150" />
+      <polygon class="path-arrow" points="590,140 600,150 590,160" />
+    </svg>
+
+    <div class="level-wrapper">
+      <div class="level-icon-container level1" data-level="1" onclick="goToLevel('playground.html')">
+        <img src="assets/1000007301.jpg" alt="Level 1 - Playground" class="level-image">
+      </div>
+      <p class="level-label">Playground</p>
+    </div>
+
+    <div class="level-wrapper">
+      <div class="level-icon-container level2" data-level="2" onclick="goToLevel('school.html')">
+        <img src="assets/1000007303.jpg" alt="Level 2 - School" class="level-image">
+      </div>
+      <p class="level-label">School</p>
+    </div>
+
+    <div class="level-wrapper">
+      <div class="level-icon-container level3" data-level="3" onclick="goToLevel('airport.html')">
+        <img src="assets/1000007305.jpg" alt="Level 3 - Airport" class="level-image">
+      </div>
+      <p class="level-label">Airport</p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const levels = [
+        { el: document.querySelector('.level1'), key: 'level1', url: 'playground.html' },
+        { el: document.querySelector('.level2'), key: 'level2', url: 'school.html' },
+        { el: document.querySelector('.level3'), key: 'level3', url: 'airport.html' }
+      ];
+
+      function updateLevelUI() {
+        levels.forEach((level, i) => {
+          const isUnlocked = (i === 0) || (localStorage.getItem(level.key) === 'unlocked');
+          const levelImage = level.el.querySelector('.level-image');
+
+          if (isUnlocked) {
+            level.el.classList.add('unlocked');
+            levelImage.classList.add('unlocked');
+            level.el.style.cursor = 'pointer';
+            level.el.onclick = () => goToLevel(level.url);
+          } else {
+            level.el.classList.remove('unlocked');
+            levelImage.classList.remove('unlocked');
+            level.el.style.cursor = 'not-allowed';
+            level.el.onclick = null;
+          }
+        });
+      }
+
+      updateLevelUI();
+
+      window.goToLevel = function (url) {
+        window.location.href = url;
+      };
+
+      window.addEventListener('storage', updateLevelUI);
+    });
+  </script>
+</body>
+
+</html>
